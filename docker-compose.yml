@@ -1,0 +1,34 @@
+# ============================================================
+# 青龙面板定制镜像 docker-compose 配置
+# ============================================================
+
+version: '3.8'
+
+services:
+  qinglong:
+    image: s2662939/qinglong-custom:latest
+    container_name: qinglong-custom
+    restart: unless-stopped
+    ports:
+      - "5700:5700"
+    environment:
+      - TZ=Asia/Shanghai
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./data:/ql/data
+      - ./logs:/ql/logs
+      - ./scripts:/ql/scripts
+      - ./repo:/ql/repo
+    networks:
+      - qinglong-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5700/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+networks:
+  qinglong-net:
+    driver: bridge
