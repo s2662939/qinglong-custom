@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Docker image version tag'
+        required: false
+        default: 'V1.10.0'
 
 jobs:
   build:
@@ -32,11 +37,9 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository_lower }}
           tags: |
-            type=sha,prefix=
-            type=ref,event=branch
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=V1.10.0
             type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=sha-
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
